@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CTD · Поиск бизнеса</title>
+<style>
+:root{--bg:#f6f6f2;--card:#fff;--tx:#111;--mu:#6c6c66;--bd:#e0e0d8;--ac:#a3a39e;--on:#0b0b0b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#090909;--card:#141414;--tx:#f2f2ee;--mu:#8d8d86;--bd:#272725}}
+:root[data-theme="dark"]{--bg:#090909;--card:#141414;--tx:#f2f2ee;--mu:#8d8d86;--bd:#272725}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:760px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;gap:10px;margin-bottom:28px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;flex:1;min-width:150px}
+.logo i{width:34px;height:34px;border-radius:10px;background:var(--ac);color:var(--on);display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13px}
+.logo small{display:block;font-weight:400;color:var(--mu);font-size:12px}
+.pill{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:7px 13px;font:inherit;font-size:13px;cursor:pointer}
+h1{font-size:clamp(30px,8vw,48px);line-height:1.05;margin:0 0 12px;letter-spacing:-.03em}
+h1 span{color:var(--mu)}
+.lead{color:var(--mu);margin:0 0 24px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;margin-bottom:18px}
+h2{font-size:18px;margin:0 0 14px}
+label{display:block;font-size:13px;color:var(--mu);margin-bottom:12px}
+input[type=text],input[type=number],input[type=tel]{width:100%;margin-top:5px;padding:12px 13px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font:inherit}
+input:focus{outline:2px solid var(--ac);outline-offset:0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.row{grid-template-columns:1fr}}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;background:var(--ac);color:var(--on);font:inherit;font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.note{font-size:12px;color:var(--mu);margin:10px 0 0}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.links a{color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;text-decoration:none;font-size:14px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px}
+.tabs button{white-space:nowrap}
+.tabs .on{background:var(--ac);color:var(--on);border-color:var(--ac);font-weight:700}
+.org{border-top:1px solid var(--bd);padding:14px 0}
+.org:first-child{border-top:0}
+.org b{font-size:16px}
+.org .m{color:var(--mu);font-size:14px}
+.org a{color:var(--tx)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{border:1px solid var(--bd);background:none;color:var(--mu);border-radius:99px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}
+.chip.y{border-color:var(--ac);color:var(--tx);background:color-mix(in srgb,var(--ac) 25%,transparent)}
+.empty{color:var(--mu);text-align:center;padding:24px 0}
+.chk{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--tx);margin-bottom:12px}
+.chk label{margin:0;color:var(--tx);display:flex;gap:6px;align-items:center}
+.org a.chip{text-decoration:none;display:inline-block;margin:0 4px;color:var(--tx)}
+#how{display:none}
+footer{color:var(--mu);font-size:12px;text-align:center;padding:12px 0 24px}
+</style></head>
+<body><div class="w">
+<header>
+ <div class="logo"><i>CTD</i><div>Parser<small>Поиск бизнеса</small></div></div>
+ <span class="pill" id="cnt">Сегодня: 0 / 50</span>
+ <button class="pill" id="hb">Как работает</button>
+</header>
+
+<div class="card" id="how"><h2>Как работает</h2>
+ <ol style="margin:0;padding-left:20px;color:var(--mu)">
+  <li>Укажи нишу и город — откроются ссылки на поиск в картах.</li>
+  <li>Найденные организации без сайта добавь в рабочий список.</li>
+  <li>Отметь, есть ли сайт и онлайн-запись, добавь в избранное и экспортируй в CSV.</li>
+ </ol></div>
+
+<h1>Следующий клиент <span>начинается с поиска.</span></h1>
+<p class="lead">Найди бизнес без указанного сайта и онлайн-записи. Сохрани контакт и продолжай работать с ним.</p>
+
+<form class="card" id="sf">
+ <h2>Найти бизнесы</h2>
+ <label>Ниша<input type="text" id="niche" placeholder="Например: барбершоп, автосервис, ногтевая студия" required></label>
+ <div class="row">
+  <label>Город или регион<input type="text" id="city" placeholder="Любой город или область" required></label>
+  <label>Сколько найти<input type="number" id="num" min="1" max="50" value="20"></label>
+ </div>
+ <div class="chk"><label><input type="checkbox" id="nosite" checked> Только организации без сайта</label></div>
+ <button class="btn" type="submit">Найти бизнесы</button>
+ <p class="note">Сайт и запись проверяются в карточке организации</p>
+ <div id="st" class="note"></div><div id="lk"></div>
+</form>
+
+<form class="card" id="af" style="display:none">
+ <h2>Добавить организацию <span id="prog" style="color:var(--mu);font-weight:400;font-size:14px"></span></h2>
+ <div class="row">
+  <label>Название<input type="text" id="n" required></label>
+  <label>Телефон<input type="tel" id="p"></label>
+ </div>
+ <label>Адрес<input type="text" id="a"></label>
+ <div class="chk"><label><input type="checkbox" id="s"> Есть сайт</label><label><input type="checkbox" id="b"> Есть онлайн-запись</label></div>
+ <button class="btn" type="submit">В рабочий список</button>
+</form>
+
+<div class="card">
+ <h2>Рабочий список</h2>
+ <div class="tabs" id="tb"></div>
+ <div id="ls"></div>
+ <button class="pill" id="ex" style="display:none;margin-top:10px">Экспорт в CSV</button>
+</div>
+<footer>© CTD Parser · история хранится в этом браузере</footer>
+</div>
+<script>
+const LIM=50,TABS=[['res','Результаты'],['fav','Избранное'],['his','История'],['all','Все контакты']];
+let S={orgs:[],hist:[],day:{d:'',n:0},sid:0,q:null,tab:'res'};
+try{Object.assign(S,JSON.parse(localStorage.getItem('cxz')||'{}'))}catch(e){}
+const $=id=>document.getElementById(id);
+const save=()=>{try{localStorage.setItem('cxz',JSON.stringify(S))}catch(e){}};
+const day=()=>new Date().toISOString().slice(0,10);
+const used=()=>S.day.d===day()?S.day.n:0;
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function head(){
+ $('cnt').textContent='Сегодня: '+used()+' / '+LIM;
+ const q=S.q;$('af').style.display=q?'block':'none';
+ if(q){const k=S.orgs.filter(o=>o.sid===S.sid).length;$('prog').textContent='· '+k+' из '+q.count;}
+}
+function links(q){
+ const t=encodeURIComponent(q.niche+' '+q.city);
+ $('lk').innerHTML='<div class="links">'+
+  '<a target="_blank" rel="noopener" href="https://2gis.ru/search/'+t+'">2ГИС</a>'+
+  '<a target="_blank" rel="noopener" href="https://yandex.ru/maps/?text='+t+'">Яндекс Карты</a></div>'+
+  '<p class="note">Открой карты, найди организации без сайта и добавь их ниже.</p>';
+}
+const mapUrl=o=>o.ll?'https://yandex.ru/maps/?ll='+o.ll[1]+','+o.ll[0]+'&z=17&pt='+o.ll[1]+','+o.ll[0]+',pm2rdm':'https://yandex.ru/maps/?text='+encodeURIComponent([o.name,o.addr,o.city].filter(Boolean).join(' '));
+function card(o){
+ return '<div class="org"><div style="display:flex;justify-content:space-between;gap:8px"><b>'+esc(o.name)+'</b>'+
+ '<button class="chip" data-a="fav" data-i="'+o.id+'" title="Избранное">'+(o.fav?'★':'☆')+'</button></div>'+
+ '<div class="m">'+(o.phone?'<a href="tel:'+esc(o.phone)+'">'+esc(o.phone)+'</a>':'телефон не указан')+' <a class="chip" target="_blank" rel="noopener" href="'+esc(mapUrl(o))+'">Показать на карте</a>'+(o.addr?' · '+esc(o.addr):'')+'</div>'+
+ '<div class="m">'+esc(o.niche)+' · '+esc(o.city)+'</div>'+
+ '<div class="chips"><button class="chip '+(o.site?'y':'')+'" data-a="site" data-i="'+o.id+'">'+(o.site?'Есть сайт':'Сайта нет')+'</button>'+
+ '<button class="chip '+(o.book?'y':'')+'" data-a="book" data-i="'+o.id+'">'+(o.book?'Есть запись':'Записи нет')+'</button>'+
+ '<button class="chip" data-a="del" data-i="'+o.id+'">Удалить</button></div></div>';
+}
+function render(){
+ head();
+ $('tb').innerHTML=TABS.map(t=>'<button class="pill '+(S.tab===t[0]?'on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>').join('');
+ let h='';
+ if(S.tab==='his'){
+  h=S.hist.length?S.hist.map(x=>'<div class="org"><b>'+esc(x.niche)+'</b> · '+esc(x.city)+'<div class="m">до '+x.count+' · '+new Date(x.ts).toLocaleString('ru-RU')+'</div><div class="chips"><button class="chip" data-a="re" data-i="'+x.id+'">Повторить</button></div></div>').join(''):'<div class="empty">Поисков пока нет</div>';
+ }else{
+  let l=S.orgs;
+  if(S.tab==='res')l=l.filter(o=>o.sid===S.sid);
+  if(S.tab==='fav')l=l.filter(o=>o.fav);
+  h=l.length?l.slice().reverse().map(card).join(''):'<div class="empty">'+(S.tab==='res'?'Запусти поиск и добавь найденные организации':S.tab==='fav'?'В избранном пусто':'Контактов пока нет')+'</div>';
+ }
+ $('ls').innerHTML=h;
+ $('ex').style.display=S.tab!=='his'&&S.orgs.length?'inline-block':'none';
+}
+$('hb').onclick=()=>{const e=$('how');e.style.display=e.style.display==='block'?'none':'block'};
+let busy=false;
+const msg=e=>({limit:'Дневной лимит организаций исчерпан.',rate:'Слишком много поисков за час. Попробуйте позже.',server:'Сервис поиска временно недоступен, попробуйте ещё раз.'}[e&&e.code]||'Не удалось выполнить поиск.');
+async function find(q){
+ const need=Math.min(q.count,LIM-used());
+ if(need<=0)throw{code:'limit'};
+ const seen=new Set(S.orgs.map(o=>o.tid)),out=[];let ofs=0;
+ for(let i=0;i<5&&out.length<need;i++){
+  const r=await fetch('/api/search?q='+encodeURIComponent(q.niche+' '+q.city)+'&ofs='+ofs);
+  if(r.status===429)throw{code:'rate'};
+  if(!r.ok)throw{code:'server'};
+  const p=await r.json();
+  for(const x of p.items){
+   if(seen.has(x.tid))continue;
+   if($('nosite').checked&&x.site)continue;
+   seen.add(x.tid);
+   out.push({id:Date.now()+Math.random(),tid:x.tid,sid:S.sid,niche:q.niche,city:q.city,name:x.name,phone:x.phone,addr:x.addr,site:x.site,book:false,fav:false,ll:x.ll});
+   if(out.length>=need)break;
+  }
+  if(p.next==null||!p.items.length)break;
+  ofs=p.next;
+ }
+ return out;
+}
+$('sf').onsubmit=async e=>{
+ e.preventDefault();
+ if(busy)return;
+ const q={niche:$('niche').value.trim(),city:$('city').value.trim(),count:Math.min(LIM,Math.max(1,+$('num').value||20))};
+ if(!q.niche||!q.city)return;
+ S.sid=Date.now();S.q=q;S.tab='res';
+ S.hist.unshift({id:S.sid,ts:S.sid,...q});S.hist=S.hist.slice(0,50);
+ save();links(q);render();
+ busy=true;const btn=$('sf').querySelector('.btn');btn.disabled=true;$('st').textContent='Ищем организации…';
+ try{
+  const out=await find(q);
+  S.orgs.push(...out);S.day={d:day(),n:used()+out.length};save();
+  $('st').textContent=out.length?'Найдено и добавлено в список: '+out.length:'Новых организаций не найдено. Попробуйте другую нишу или снимите фильтр «без сайта».';
+ }catch(err){$('st').textContent=msg(err)}
+ busy=false;btn.disabled=false;render();
+};
+$('af').onsubmit=e=>{
+ e.preventDefault();
+ if(used()>=LIM){alert('Дневной лимит '+LIM+' организаций исчерпан');return;}
+ S.orgs.push({id:Date.now()+Math.random(),sid:S.sid,niche:S.q.niche,city:S.q.city,name:$('n').value.trim(),phone:$('p').value.trim(),addr:$('a').value.trim(),site:$('s').checked,book:$('b').checked,fav:false});
+ S.day={d:day(),n:used()+1};
+ ['n','p','a'].forEach(i=>$(i).value='');$('s').checked=$('b').checked=false;
+ save();render();$('n').focus();
+};
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-t],[data-a]');if(!t)return;
+ if(t.dataset.t){S.tab=t.dataset.t;render();return;}
+ const a=t.dataset.a,id=+t.dataset.i;
+ if(a==='re'){const x=S.hist.find(h=>h.id===id);if(x){$('niche').value=x.niche;$('city').value=x.city;$('num').value=x.count;scrollTo({top:0,behavior:'smooth'});}return;}
+ const o=S.orgs.find(o=>o.id===id);if(!o)return;
+ if(a==='fav')o.fav=!o.fav;
+ if(a==='site')o.site=!o.site;
+ if(a==='book')o.book=!o.book;
+ if(a==='del'&&confirm('Удалить контакт?'))S.orgs=S.orgs.filter(x=>x!==o);
+ save();render();
+});
+$('ex').onclick=()=>{
+ const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ const rows=[['Название','Телефон','Адрес','Ниша','Город','Сайт','Запись','Избранное']].concat(S.orgs.map(o=>[o.name,o.phone,o.addr,o.niche,o.city,o.site?'да':'нет',o.book?'да':'нет',o.fav?'да':'нет']));
+ const csv='\ufeff'+rows.map(r=>r.map(q).join(',')).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='ctd-contacts.csv';a.click();
+};
+if(S.q)links(S.q);
+render();
+</script></body></html>
